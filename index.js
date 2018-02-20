@@ -2,6 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const redis = require('redis');
 const client = redis.createClient();
+const server = redis.createClient();
 const io = require('socket.io')(http);
 const appName = process.argv.slice(2)[0];
 const serverPort = process.argv.slice(3)[0];
@@ -13,13 +14,18 @@ client.on("message", function (channel, message) {
 	console.log(message)
 	var info = JSON.parse(message);
 	io.sockets.emit(channel, info);
-	console.log(`${channel} -- ${info.payload}`);
+	console.log(`${channel} -- ${message}`);
 });
 
 io.listen(socketPort);
 
 io.on("connection", function(socket) {
 	console.log("connected socket")
+
+	// socket.on('message', function (msg) {
+	// 	server.publish('demo-api', JSON.stringify(msg));
+	// });
+
 	socket.on("disconnect", function () {
 		console.log("client disconnected")
 		socket.disconnect();
