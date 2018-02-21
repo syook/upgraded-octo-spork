@@ -11,27 +11,27 @@ const socketPort = process.argv.slice(4)[0];
 client.subscribe(appName);
 
 client.on("message", function (channel, message) {
-	console.log(message)
+	// console.log(message)
 	var info = JSON.parse(message);
 	io.sockets.emit(channel, info);
-	console.log(`${channel} -- ${message}`);
+	// console.log(`${channel} -- ${message}`);
 });
 
 io.listen(socketPort);
 
 io.on("connection", function(socket) {
-	console.log("connected socket")
+	// console.log("connected socket")
 
-	// socket.on('message', function (msg) {
-	// 	server.publish('demo-api', JSON.stringify(msg));
-	// });
+	socket.on(appName, function (msg) {
+		server.publish(`${appName}-server`, JSON.stringify(msg));
+	});
 
 	socket.on("disconnect", function () {
-		console.log("client disconnected")
+		// console.log("client disconnected")
 		socket.disconnect();
 	});
 });
 
 http.listen(serverPort, function () {
-	console.log('listening on port ' + serverPort);
+	// console.log('listening on port ' + serverPort);
 });
